@@ -63,25 +63,6 @@
       color: #6a9fd4;
     }
 
-    .player-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #7a7a7a;
-      background: white;
-      border: 2px dashed #e0d6eb;
-      border-radius: 12px;
-      padding: 0.4em 1.2em;
-      min-width: 120px;
-      text-align: center;
-      outline: none;
-      cursor: text;
-    }
-
-    .player-name:focus {
-      border-style: solid;
-      border-color: #d4b8e8;
-    }
-
     .score-area {
       display: flex;
       flex-direction: column;
@@ -169,11 +150,20 @@
       background: #a8c8e8;
     }
 
-    .vs {
+    .game-count {
       font-size: 1.8rem;
       font-weight: 800;
       color: #d4c1e0;
       padding-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .game-count .label {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
     }
 
     .reset-btn {
@@ -232,7 +222,6 @@
     <!-- Winner (left, red) -->
     <div class="player winner">
       <span class="player-label">WINNER</span>
-      <div class="player-name" contenteditable="true" data-placeholder="Player 1">Player 1</div>
       <div class="score-area">
         <div class="score" id="score-winner">0</div>
         <div class="buttons">
@@ -242,12 +231,14 @@
       </div>
     </div>
 
-    <div class="vs">VS</div>
+    <div class="game-count">
+      <span class="label">GAMES</span>
+      <span id="game-total">0</span>
+    </div>
 
     <!-- Loser (right, blue) -->
     <div class="player loser">
       <span class="player-label">LOSER</span>
-      <div class="player-name" contenteditable="true" data-placeholder="Player 2">Player 2</div>
       <div class="score-area">
         <div class="score" id="score-loser">0</div>
         <div class="buttons">
@@ -264,10 +255,15 @@
   <script>
     const scores = { winner: 0, loser: 0 };
 
+    function updateGameCount() {
+      document.getElementById('game-total').textContent = scores.winner + scores.loser;
+    }
+
     function changeScore(side, delta) {
       scores[side] = Math.max(0, scores[side] + delta);
       const el = document.getElementById(`score-${side}`);
       el.textContent = scores[side];
+      updateGameCount();
 
       el.classList.remove('pop');
       void el.offsetWidth;
@@ -283,6 +279,7 @@
       scores.loser = 0;
       document.getElementById('score-winner').textContent = '0';
       document.getElementById('score-loser').textContent = '0';
+      updateGameCount();
     }
 
     function spawnConfetti(target) {
@@ -303,19 +300,6 @@
       }
     }
 
-    // Handle empty contenteditable placeholders
-    document.querySelectorAll('.player-name').forEach(el => {
-      el.addEventListener('focus', () => {
-        if (el.textContent === el.dataset.placeholder) {
-          el.textContent = '';
-        }
-      });
-      el.addEventListener('blur', () => {
-        if (el.textContent.trim() === '') {
-          el.textContent = el.dataset.placeholder;
-        }
-      });
-    });
   </script>
 </body>
 </html>
