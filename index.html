@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scoreboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      background: #fef6f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      color: #b8a9c9;
+      letter-spacing: 0.3em;
+      font-weight: 800;
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .player-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 0.3em 1.2em;
+      border-radius: 999px;
+    }
+
+    .player.winner .player-label {
+      background: #fcd5ce;
+      color: #d4726a;
+    }
+
+    .player.loser .player-label {
+      background: #c6def1;
+      color: #6a9fd4;
+    }
+
+    .player-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #7a7a7a;
+      background: white;
+      border: 2px dashed #e0d6eb;
+      border-radius: 12px;
+      padding: 0.4em 1.2em;
+      min-width: 120px;
+      text-align: center;
+      outline: none;
+      cursor: text;
+    }
+
+    .player-name:focus {
+      border-style: solid;
+      border-color: #d4b8e8;
+    }
+
+    .score-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .score {
+      font-size: 5rem;
+      font-weight: 800;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 28px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      user-select: none;
+    }
+
+    .score.pop {
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    .player.winner .score {
+      background: linear-gradient(145deg, #fcd5ce, #f8b4b4);
+      color: #c9514a;
+    }
+
+    .player.loser .score {
+      background: linear-gradient(145deg, #c6def1, #a8c8e8);
+      color: #4a7fb5;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.3rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .player.winner .btn {
+      background: #fcd5ce;
+      color: #c9514a;
+    }
+
+    .player.winner .btn:hover {
+      background: #f8b4b4;
+    }
+
+    .player.loser .btn {
+      background: #c6def1;
+      color: #4a7fb5;
+    }
+
+    .player.loser .btn:hover {
+      background: #a8c8e8;
+    }
+
+    .vs {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #d4c1e0;
+      padding-top: 1.5rem;
+    }
+
+    .reset-btn {
+      background: #efe3f5;
+      color: #a88bc2;
+      border: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.6em 2em;
+      border-radius: 999px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: background 0.2s ease, transform 0.12s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .reset-btn:hover {
+      background: #e3d0f0;
+      transform: scale(1.05);
+    }
+
+    .reset-btn:active {
+      transform: scale(0.97);
+    }
+
+    .confetti {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      animation: fall 1.2s ease-out forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(120px) rotate(360deg) scale(0.5);
+      }
+    }
+
+    .footer {
+      font-size: 0.75rem;
+      color: #c8bdd4;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>SCOREBOARD</h1>
+
+  <div class="scoreboard">
+    <!-- Winner (left, red) -->
+    <div class="player winner">
+      <span class="player-label">WINNER</span>
+      <div class="player-name" contenteditable="true" data-placeholder="Player 1">Player 1</div>
+      <div class="score-area">
+        <div class="score" id="score-winner">0</div>
+        <div class="buttons">
+          <button class="btn" onclick="changeScore('winner', -1)">−</button>
+          <button class="btn" onclick="changeScore('winner', 1)">＋</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="vs">VS</div>
+
+    <!-- Loser (right, blue) -->
+    <div class="player loser">
+      <span class="player-label">LOSER</span>
+      <div class="player-name" contenteditable="true" data-placeholder="Player 2">Player 2</div>
+      <div class="score-area">
+        <div class="score" id="score-loser">0</div>
+        <div class="buttons">
+          <button class="btn" onclick="changeScore('loser', -1)">−</button>
+          <button class="btn" onclick="changeScore('loser', 1)">＋</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetScores()">RESET</button>
+  <div class="footer">click ＋ / − to update scores</div>
+
+  <script>
+    const scores = { winner: 0, loser: 0 };
+
+    function changeScore(side, delta) {
+      scores[side] = Math.max(0, scores[side] + delta);
+      const el = document.getElementById(`score-${side}`);
+      el.textContent = scores[side];
+
+      el.classList.remove('pop');
+      void el.offsetWidth;
+      el.classList.add('pop');
+
+      if (delta > 0) {
+        spawnConfetti(el);
+      }
+    }
+
+    function resetScores() {
+      scores.winner = 0;
+      scores.loser = 0;
+      document.getElementById('score-winner').textContent = '0';
+      document.getElementById('score-loser').textContent = '0';
+    }
+
+    function spawnConfetti(target) {
+      const rect = target.getBoundingClientRect();
+      const colors = ['#fcd5ce', '#c6def1', '#efe3f5', '#ffeaa7', '#dfe6e9', '#f8b4b4', '#a8c8e8'];
+      const shapes = ['●', '♥', '★', '◆'];
+
+      for (let i = 0; i < 6; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        el.style.left = `${rect.left + rect.width / 2 + (Math.random() - 0.5) * 80}px`;
+        el.style.top = `${rect.top + (Math.random() - 0.5) * 30}px`;
+        el.style.color = colors[Math.floor(Math.random() * colors.length)];
+        el.style.fontSize = `${0.8 + Math.random() * 0.8}rem`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1200);
+      }
+    }
+
+    // Handle empty contenteditable placeholders
+    document.querySelectorAll('.player-name').forEach(el => {
+      el.addEventListener('focus', () => {
+        if (el.textContent === el.dataset.placeholder) {
+          el.textContent = '';
+        }
+      });
+      el.addEventListener('blur', () => {
+        if (el.textContent.trim() === '') {
+          el.textContent = el.dataset.placeholder;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
